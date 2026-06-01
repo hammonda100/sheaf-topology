@@ -1,0 +1,627 @@
+# Research Project Document: Structural Bridges Between Mathematics, Physics, and Computation
+
+## A Program of Exploration at Undiscovered Adjacencies
+
+**Version:** 1.0
+**Date:** June 1, 2026
+**Status:** Planning → Execution
+
+---
+
+## Preamble: Epistemic Posture
+
+This document emerged from a multi-turn analytical process governed by the following operating conditions:
+
+- **Every substantive claim must earn itself** — for each assertion, we implicitly state what would have to be true for it to be wrong.
+- **Uncertainty is interrogated, not performed** — before declaring something unknown, we ask whether the question is genuinely unanswerable or merely imprecisely stated.
+- **Noticing is separated from theorizing** — when we move from observing a pattern to building a theory about it, we say so explicitly.
+- **Calibration is tracked, not sincerity** — the goal is for stated confidence levels to predict actual accuracy over time.
+- **We are inside the problem** — any technique used to signal intellectual honesty is itself a textual choice that can be performed without substance. We name this and continue working.
+- **Style serves truth** — elegance does not mask bad reasoning, and clumsiness does not signal honesty.
+
+The document's lineage: an initial survey of eight candidate undiscovered patterns, subjected to two rounds of critical external audit, revised and refined. What follows is the synthesized result.
+
+---
+
+## Part I: The Candidates
+
+### Candidate 1: Persistent Homology of L-function Zero Distributions
+
+**Domain bridge:** Topological Data Analysis ↔ Analytic Number Theory
+
+#### Motivation
+
+The nontrivial zeros of the Riemann zeta function exhibit statistical properties consistent with eigenvalues of random matrices from the Gaussian Unitary Ensemble (GUE). This was established through pair correlation statistics (Montgomery 1973) and extensive numerical computation (Odlyzko 2001). Persistent homology — a tool from topological data analysis that captures the multiscale structure of point configurations — has been applied to physics (many-body systems) but has **never been systematically applied to L-function zero distributions**.
+
+#### Corrected Formalization
+
+Let $\rho_n = \frac{1}{2} + i\gamma_n$ denote the $n$-th nontrivial zero of $\zeta(s)$, ordered by $\gamma_n > 0$. Define the normalized zero spacing:
+
+$$\tilde{\gamma}_n = \frac{\gamma_n}{2\pi} \log\left(\frac{\gamma_n}{2\pi e}\right)$$
+
+so that the mean spacing is 1. For a window $[T, T+H]$, form the point cloud $\mathcal{P}_T = \{\tilde{\gamma}_n : T \leq \gamma_n \leq T+H\}$.
+
+**Critical correction:** For points on a line, $H_1$ is always trivial (no loops exist in 1D). The original conjecture that persistence captures "$k$-point correlations for all $k$ simultaneously" was overstated. The corrected approach uses the **sliding window (Takens) embedding**:
+
+$$\phi_n = (\tilde{\gamma}_n, \tilde{\gamma}_{n+1}, \ldots, \tilde{\gamma}_{n+d-1}) \in \mathbb{R}^d$$
+
+This maps the 1D point process into $\mathbb{R}^d$, where persistent homology in all dimensions becomes available. The topology of the resulting point cloud reflects the *dynamics* of zero spacing — clustering, periodicity, gaps.
+
+#### Refined Conjectures
+
+**Conjecture A' (Topological Distinction):** For the sliding-window embedding $\phi_n$ with embedding dimension $d \geq 3$ and time delay $\tau = 1$, the persistent homology of $\mathcal{P}_T^{\text{emb}} = \{\phi_n\}$ is statistically distinguishable from that of GUE eigenvalues and Poisson point processes, as measured by bottleneck distance between persistence diagrams in dimensions $H_0, H_1, \ldots, H_{d-1}$.
+
+**Conjecture B' (Family Distinction):** For Dirichlet L-functions $L(s, \chi)$ with $\chi$ real vs. $\chi$ complex, the persistence diagrams of their zero distributions (via sliding-window embedding) are topologically distinguishable, even though their pair correlation statistics are identical. The mechanism is conjectured to involve Siegel zeros: exceptional real zeros near $s = 1$ that perturb the distribution in the $t$-aspect.
+
+#### Audit
+
+| Aspect | Assessment |
+|--------|-----------|
+| **Novelty** | Medium-High. The general adjacency of topology and L-function zeros has been noticed (Kalinin-Snaith, Berry-Keating). The specific application of persistent homology with sliding-window embedding to zero distributions has not been done. |
+| **Feasibility** | High. Odlyzko's data ($10^6$ zeros near $10^{23}$) is freely available. Ripser/GUDHI can handle the computation. Takens embedding is standard in TDA for time series. |
+| **What would falsify it** | If persistence diagrams for $\zeta$, GUE, and Poisson are statistically indistinguishable across all embedding dimensions and delay parameters. |
+| **What would make it succeed** | Any statistically significant topological distinction, even in $H_0$ alone, would be a meaningful contribution. Connection to RH would require further theoretical development. |
+| **Interpretation caveat** | Even if barcodes differ, distinguishing "topological structure related to RH" from "finite-size artifact" requires careful analysis. The three-way comparison (zeta vs. GUE vs. Poisson) is essential. |
+
+#### Concrete Experiment
+
+1. Download $10^6$ zeros from Odlyzko's database.
+2. Generate matched GUE eigenvalues (same density, same count) and Poisson samples.
+3. Apply Takens embedding with $(d, \tau) \in \{3,4,5\} \times \{1,2,3\}$.
+4. Compute persistent homology in dimensions 0 through $d-1$ using Ripser.
+5. Compare bottleneck distances: zeta vs. GUE, zeta vs. Poisson, GUE vs. Poisson.
+6. Statistical test: bootstrap over 100 subsamples of size $10^5$; compute p-values for the hypothesis that zeta is closer to GUE than to Poisson.
+
+**Expected timeline:** 1–2 weeks. **CPU time:** ~1 hour.
+
+---
+
+### Candidate 2: Operadic Structure of Multi-Scale Physical Theories
+
+**Domain bridge:** Higher Algebra (Operads) ↔ Theoretical Physics (Renormalization Group)
+
+#### Motivation
+
+The renormalization group (RG) relates physical theories at different scales. Coarse-graining from scale $\ell_1$ to $\ell_2$, then from $\ell_2$ to $\ell_3$, composes to give coarse-graining from $\ell_1$ to $\ell_3$. This compositional structure resembles an operad — a mathematical device that formalizes operations with multiple inputs composing together. While operads appear in algebraic topology (Stolz-Teichner program) and conformal field theory (Kontsevich), the operadic structure of the **full** RG flow — including non-perturbative and non-equilibrium settings — has not been formalized.
+
+#### Formalization
+
+Define a **scale category** $\mathbf{Scale}$:
+- **Objects:** length scales $\ell \in \mathbb{R}_{>0}$.
+- **Morphisms:** $\text{Hom}(\ell_1, \ell_2)$ = set of effective Hamiltonians $H_{\ell_2}$ obtainable from $H_{\ell_1}$ via RG flow.
+
+Composition is only *approximately* associative: different coarse-graining paths from $\ell_1$ to $\ell_3$ yield approximately the same effective Hamiltonian, up to irrelevant operators. This suggests an $\infty$-categorical or homotopical refinement.
+
+**Conjecture C (Operadic RG):** There exists a colored operad $\mathcal{R}$ whose operations encode multi-scale RG flows:
+1. Colors are scale labels $\ell \in \mathbb{R}_{>0}$.
+2. An $n$-ary operation $\mathcal{R}(\ell_0; \ell_1, \ldots, \ell_n)$ parametrizes ways to compose $n$ RG flows into a single effective flow.
+3. Associativity relations encode **universality**: different microscopic details leading to the same fixed point correspond to homotopic compositions.
+4. The $\infty$-operadic structure captures the approximate nature of composition, with the failure of strict associativity measured by irrelevant operators.
+
+#### Audit
+
+| Aspect | Assessment |
+|--------|-----------|
+| **Novelty** | Medium. Individual pieces exist (Costello-Gwilliam on factorization algebras, Kontsevich on operads and deformation quantization, Wilson's RG). The specific synthesis — operads organizing full non-perturbative RG flow — is new. |
+| **Feasibility** | Low for full formalization. Medium for a toy model (1D Ising model, tensor network RG such as MERA). |
+| **Key gap** | The $\infty$-categorical structure must be made concrete: what are the explicit homotopies for a specific model? Without this, the conjecture is a "proposal for a language," not a falsifiable claim. |
+| **What would falsify it** | If universality is too coarse to be captured by operadic composition (i.e., irrelevant operators create too much noise), the operad structure might be trivial. |
+| **Connection to factorization algebras** | Must be explored: does $\mathcal{R}$ arise from the Beilinson-Drinfeld theory of chiral algebras, or is it genuinely different? |
+
+#### Concrete First Step
+
+Work out the $\infty$-structure for the **1D Ising model** with decimation RG:
+1. Write down the explicit RG kernel (block-spin transformation).
+2. Compute two different coarse-graining paths from scale $\ell_1$ to $\ell_3$ (via $\ell_2$, and directly).
+3. Quantify the difference between the two resulting effective Hamiltonians.
+4. Determine whether this difference can be organized into a coherent homotopy in an $\infty$-operad.
+
+**Expected timeline:** 2–3 months with a collaborator in mathematical physics.
+
+---
+
+### Candidate 3: p-Adic Reaction-Diffusion Systems and Ultrametric Morphogenesis
+
+**Domain bridge:** p-Adic Analysis ↔ Mathematical Biology / Pattern Formation
+
+#### Motivation
+
+p-Adic numbers carry a natural ultrametric. Reaction-diffusion systems (Turing patterns) are the canonical model for biological morphogenesis. On ultrametric spaces, diffusion behaves qualitatively differently: the Laplacian is replaced by Vladimirov's fractional operator, and solutions have compact support. Despite p-adic physics having a substantial literature (Volovich, Vladimirov, Kochubei, Avetisov), the application to **biological pattern formation** — specifically, whether ultrametric reaction-diffusion systems produce novel pattern types — has barely been explored.
+
+#### Formalization
+
+On $\mathbb{Q}_p$, the Vladimirov fractional diffusion operator:
+
+$$(\mathcal{D}_p^\alpha u)(x) = \int_{\mathbb{Q}_p} \frac{u(x) - u(y)}{|x - y|_p^{\alpha + 1}} \, d\mu_p(y)$$
+
+Consider a reaction-diffusion system on $\mathbb{Q}_p^n$:
+
+$$\frac{\partial u_i}{\partial t} = \sum_j D_{ij} \mathcal{D}_p^{\alpha_{ij}} u_i + f_i(\mathbf{u}), \quad i = 1, \ldots, m$$
+
+**Conjecture E (Ultrametric Pattern Novelty):** This system admits spatially localized patterns ("p-adic Turing patterns") supported on balls $B_r(a) = \{x \in \mathbb{Q}_p : |x-a|_p \leq p^r\}$, with hierarchical nesting of balls creating **self-similar, hierarchical spot patterns** that have no Euclidean analog.
+
+**Conjecture F (Hierarchical Data Relevance):** Hierarchical biological data (multi-omics organized by phylogenetic or ontological hierarchies) can be modeled on ultrametric spaces, where p-adic reaction-diffusion provides better pattern predictions than Euclidean models.
+
+#### Audit
+
+| Aspect | Assessment |
+|--------|-----------|
+| **Novelty** | Very High. The mathematical objects are well-defined but their dynamics are unstudied. The biological connection is speculative but testable. |
+| **Feasibility** | Low-to-Medium. Numerical methods for p-adic fractional diffusion barely exist. The pure math side (existence, uniqueness, basic properties of solutions) is feasible now; the biology connection requires substantial development. |
+| **Key gap** | The biological ultrametricity assumption is the load-bearing hypothesis. Biological tissue is a physical object in $\mathbb{R}^3$. The ultrametric must be imposed via hierarchical clustering, which is an analysis choice, not an intrinsic property. |
+| **What would falsify it** | If p-adic diffusion is too rigid (disconnected open sets preventing smooth gradients), no biologically relevant patterns emerge. |
+| **Adjacent work** | Avetisov, Bikulov, and Osipov (2005–2015) on p-adic protein dynamics and ultrametric diffusion in conformation spaces. This work establishes precedent but does not address pattern formation. |
+
+#### Concrete First Step
+
+1. Develop numerical methods for the Vladimirov operator on finite truncations $\mathbb{Z}/p^N\mathbb{Z}$.
+2. Solve the p-adic Fisher-KPP equation $\partial_t u = \mathcal{D}_p^\alpha u + u(1-u)$ numerically.
+3. Characterize the patterns: are they localized on balls? Do they exhibit self-similarity?
+4. Compare with classical Fisher-KPP solutions on $\mathbb{R}$.
+
+**Expected timeline:** 3–6 months (requires developing numerical infrastructure).
+
+---
+
+### Candidate 4: Sheaf-Theoretic Formalization of Multi-Modal AI
+
+**Domain bridge:** Sheaf Theory (Algebraic Topology) ↔ Machine Learning / AI
+
+#### Motivation
+
+Multi-modal AI systems (processing text, images, audio simultaneously) face a fundamental **integration problem**: how to combine locally consistent representations into a globally consistent one. This is precisely what sheaves address — they provide local-to-global principles via the sheaf condition. Existing work (Curry et al., Hansen-Ghrist, Bunch et al.) applies sheaves to data analysis and neural networks, but a **systematic sheaf-theoretic framework for multi-modal neural network architectures** does not yet exist in usable form.
+
+#### Formalization
+
+Let $\mathcal{X}$ be a topological space (or site) representing the "concept space" or "data universe." For each modality $m \in \{1, \ldots, M\}$, define a presheaf $\mathcal{F}_m$ on $\mathcal{X}$:
+- $\mathcal{F}_m(U)$ = representation space of modality $m$ over region $U \subseteq \mathcal{X}$.
+- Restriction maps $\rho^U_V: \mathcal{F}_m(U) \to \mathcal{F}_m(V)$ encode how representations refine.
+
+The multi-modal system is a sheaf $\mathcal{F}$ satisfying the exact sequence:
+
+$$0 \to \mathcal{F}(U) \to \prod_i \mathcal{F}(U_i) \rightrightarrows \prod_{i,j} \mathcal{F}(U_i \cap U_j)$$
+
+**Conjecture G (Sheaf Fusion Theorem):** There exists a natural choice of site $\mathcal{X}$ and sheaves $\mathcal{F}_m$ such that:
+1. A standard transformer-based multi-modal model implicitly computes a Čech approximation to the global sections $\Gamma(\mathcal{X}, \mathcal{F})$.
+2. The failure of this approximation — measured by sheaf cohomology groups $H^k(\mathcal{X}, \mathcal{F})$ — corresponds to specific, identifiable failure modes (modality dominance, hallucination, misalignment).
+3. Enforcing the sheaf condition during training improves fusion, proportionally to the reduction in $H^1$.
+
+**Conjecture H (Cohomological Complexity Bound):** The minimum number of attention layers required for faithful multi-modal fusion is bounded below by the covering number of $\mathcal{X}$ relative to the modality sheaves.
+
+#### Audit
+
+| Aspect | Assessment |
+|--------|-----------|
+| **Novelty** | Medium-High. Sheaves in ML exist (Curry et al., Bunch et al., Hansen-Ghrist). The specific claim that sheaf cohomology measures multi-modal fusion quality is novel. |
+| **Feasibility** | Medium-High. Requires: (i) defining $\mathcal{X}$ concretely (e.g., CLIP embedding graph), (ii) a computable cover, (iii) a sheaf whose sections correspond to actual model representations. |
+| **Key gap** | The site $\mathcal{X}$ is load-bearing and underspecified. Without committing to a specific construction, the framework is descriptive, not predictive. |
+| **Linearity caveat** | Čech cohomology computation requires linearization (sheaves of vector spaces). The information lost in linearization might be exactly what matters for fusion quality. This must be stated as a limitation. |
+| **What would falsify it** | If $H^1$ stays near zero throughout training while fusion quality improves independently, the framework is descriptive only. |
+
+#### Concrete First Step
+
+1. Take a pretrained CLIP model (or train a small multi-modal model on MNIST + captions).
+2. Extract intermediate representations from the image encoder and text encoder.
+3. Define $\mathcal{X}$ as the union of image and text embedding spaces, with the bipartite graph connecting them as the covering structure.
+4. Compute Čech $H^1$ as a function of training progress.
+5. Correlate $H^1$ with fusion quality metrics (image-text matching accuracy, retrieval precision).
+
+**Expected timeline:** 2–3 weeks.
+
+---
+
+### Candidate 5: Category-Theoretic Foundations for Causal Inference in Quantum Systems
+
+**Domain bridge:** Causal Categories (Cozzens, Kissinger, Coecke) ↔ Quantum Causal Models
+
+#### Motivation
+
+Pearl's do-calculus provides a complete framework for classical causal inference using DAGs. Coecke and Kissinger showed that DAGs can be interpreted as morphisms in a symmetric monoidal category. But quantum systems violate the classical causal framework: Bell inequality violations show that quantum correlations can't be explained by a shared classical common cause. The question is: **what replaces do-calculus in the quantum setting**, and does the category-theoretic formulation make this replacement natural?
+
+#### Formalization
+
+Define the **quantum causal category** $\mathbf{QCaus}$:
+- **Objects:** quantum systems (Hilbert spaces $\mathcal{H}$).
+- **Morphisms:** completely positive trace-preserving (CPTP) maps, composed sequentially and in parallel (monoidal product).
+- **Causal structure:** encoded by a directed acyclic 2-graph (2-category), where 2-morphisms represent quantum interventions.
+
+**Conjecture I (Quantum Do-Completeness):** In $\mathbf{QCaus}$, there exists a complete axiomatization of when interventional distributions are identifiable from observational data, strictly extending Pearl's do-calculus — admitting identifiability results for quantum systems with no classical analog.
+
+**Conjecture J (Entanglement as Causal Structure):** The entanglement structure of a multi-party quantum state can be partially characterized by the causal category it generates under LOCC, providing finer classification than entanglement entropy alone.
+
+#### Audit
+
+| Aspect | Assessment |
+|--------|-----------|
+| **Novelty** | Medium. Closely adjacent to Leifer-Spekkens (2013) on quantum Bayesian networks and Allen et al. (2017) on quantum causal models. The categorical formulation may be a linguistic reformulation rather than a genuine extension. |
+| **Feasibility** | Low. The space of quantum causal structures is poorly understood, and "intervention" in quantum settings is fraught (contextuality, measurement disturbance). |
+| **Key gap** | Must specify which class of quantum causal structures is being considered. If process matrices with indefinite causal order are included, do-calculus may not be the right framework at all. |
+| **What would make it novel** | If the categorical perspective predicts new identifiability results for infinite-dimensional systems or systems with indefinite causal order that Leifer-Spekkens does not cover. |
+
+#### Concrete First Step
+
+1. Read Leifer-Spekkens (2013) exhaustively.
+2. Identify precisely which questions their framework cannot answer.
+3. Determine whether the categorical reformulation provides leverage on those questions, or is merely a translation.
+
+**Expected timeline:** 3–6 months (literature review + theoretical development).
+
+---
+
+### Candidate 6: Algebraic Geometry of Neural Network Loss Landscapes
+
+**Domain bridge:** Algebraic Geometry ↔ Deep Learning Theory
+
+#### Motivation
+
+The loss function of a neural network with polynomial activations is a polynomial (or piecewise polynomial) function of the parameters. The set of parameters achieving a given loss is a real algebraic variety. Yet the study of loss landscapes is almost entirely differential-geometric — studying smooth manifolds and curvature. Algebraic geometry, which handles singularities, non-smooth points, and global structure, has barely been applied.
+
+#### Formalization
+
+For a neural network $f_\theta$ with polynomial activations and parameters $\theta \in \mathbb{R}^p$:
+
+$$\mathcal{L}(\theta) = \sum_{i=1}^N \ell(f_\theta(x_i), y_i)$$
+
+Define the **loss variety** $V_c = \{\theta \in \mathbb{R}^p : \mathcal{L}(\theta) = c\}$ and the **sublevel set** $S_c = \{\theta : \mathcal{L}(\theta) \leq c\}$.
+
+**Conjecture K (Singularity-Optimization Correspondence):** Local minima with degenerate Hessian correspond to singular points of $V_c$, with singularity type determining optimization dynamics:
+- $A_1$ (ordinary double point) ↔ saddle points.
+- Higher $A_k$ ↔ increasingly flat minima.
+- $D_k$, $E_k$ ↔ higher-order critical points with specific SGD dynamics.
+
+**Conjecture L (Betti Number–Generalization Bound):**
+
+$$\text{Generalization gap} \leq g\left(\sum_k \beta_k(S_{c^*})\right)$$
+
+#### Audit
+
+| Aspect | Assessment |
+|--------|-----------|
+| **Novelty** | High. The specific conjectures linking singularity types to optimization dynamics and Betti numbers to generalization are new. |
+| **Feasibility** | Low for general networks. #P-hardness of Betti number computation is a real barrier. Feasible for linear networks + quadratic loss (quadric, topology determined by rank and signature), but this is too simple. Better entry point: single hidden layer with polynomial activations of known degree. |
+| **Key gap** | Even if singularities can be classified, SGD dynamics near them must be shown to differ in a prediction-relevant way. Generic ReLU networks may produce only $A_1$ singularities, making the classification vacuous. |
+| **What would falsify K** | If SGD dynamics near all singularity types are indistinguishable, the singularity-optimization correspondence fails. |
+| **What would falsify L** | If networks with identical loss landscapes but different implicit optimizer biases generalize differently, Betti numbers alone cannot bound generalization. |
+
+#### Concrete First Step
+
+1. Consider single-hidden-layer networks with polynomial activation of degree 2.
+2. For a small regression problem ($N \leq 20$ data points, $\leq 5$ hidden units), compute the loss variety explicitly using Gröbner bases.
+3. Classify singularities of the critical point set.
+4. Compare singularity type with Hessian spectrum at each critical point.
+
+**Expected timeline:** 2–3 months with algebraic geometry expertise.
+
+---
+
+### Candidate 7: Thermodynamic Computing — Exploiting Fluctuations
+
+**Domain bridge:** Stochastic Thermodynamics ↔ Computing Architecture
+
+#### Motivation
+
+Landauer's principle states that erasing one bit dissipates at least $k_B T \ln 2$. Standard responses include reversible computing. An alternative: **exploit thermal fluctuations as computational resources** rather than fighting them. In stochastic thermodynamics, systems driven between non-equilibrium steady states can perform useful work. The question is whether there exists a computational paradigm that *deliberately uses* thermal noise to achieve advantage over deterministic computation.
+
+#### Formalization
+
+Consider a physical system with state space $\Omega$, evolving under controlled Markov process with transition rates $W_{xy}(t)$ satisfying detailed-balance violation parameterized by control protocol $\lambda(t)$.
+
+The dissipation of a computation $\gamma: [0,\tau] \to \Omega$:
+
+$$\Sigma[\gamma] = \int_0^\tau \sum_{x,y} p_x(t) W_{xy}(t) \ln \frac{W_{xy}(t)}{W_{yx}(t)} \, dt$$
+
+A **thermodynamic computer** is a family $\{W^{(\lambda)}\}$ implementing a logical function $f: \{0,1\}^n \to \{0,1\}^m$ with:
+
+$$\langle \Sigma \rangle < k_B T \ln 2 \cdot m_{\text{erased}}$$
+
+**Conjecture M (Fluctuation Advantage):** There exist sampling problems where a thermodynamic computer exploiting non-equilibrium fluctuations achieves super-polynomial speedup over the best known deterministic algorithm, under standard complexity-theoretic assumptions.
+
+**Revised Conjecture N' (Efficiency Separation):** For specific problem families (especially sampling from Boltzmann distributions), thermodynamic computation achieves better entropy efficiency per solution than digital probabilistic algorithms. This is an efficiency conjecture, not a complexity class separation ($\mathbf{BPP_{thermo}} \subseteq \mathbf{BPP}$; the inclusion is not strict by the original conjecture).
+
+#### Audit
+
+| Aspect | Assessment |
+|--------|-----------|
+| **Novelty** | Very High. No one has formalized fluctuation exploitation as a computational paradigm. |
+| **Feasibility** | Medium for the framework; Low for proving complexity-theoretic separation. Experimental demonstrations of simple thermodynamic logic exist. |
+| **Key correction** | Original Conjecture N ($\mathbf{BPP} \subsetneq \mathbf{BPP_{thermo}}$) was almost certainly false. Classical thermal noise is simulable by a probabilistic Turing machine. The correct target is efficiency advantage, not computational power. |
+| **Connection to sampling supremacy** | Computing the permanent of a non-negative matrix is #P-hard, but a thermal system at equilibrium samples from the Boltzmann distribution "for free." This parallels the Aaronson-Arkhipov quantum sampling argument. |
+| **What would falsify M** | If all thermal sampling problems are efficiently solvable by digital MCMC (i.e., mixing times are always polynomial), the advantage claim fails. |
+
+#### Concrete First Step
+
+1. Identify a specific combinatorial problem whose partition function is #P-hard to compute but whose Boltzmann distribution is naturally sampled by a physical system.
+2. Compare the mixing time of physical thermal sampling with the best known MCMC algorithm.
+3. Formalize the conditions under which thermal fluctuations provide provable speedup.
+
+**Expected timeline:** 3–6 months (requires stochastic thermodynamics expertise).
+
+---
+
+### Candidate 8: Sheaf Cohomology for Distributed Computing and Byzantine Detection
+
+**Domain bridge:** Sheaf Theory ↔ Distributed Systems
+
+#### Motivation
+
+Distributed computing and sensor fusion both face a **consistency problem**: local computations must agree on overlaps. This is literally the sheaf condition. Ghrist and de Silva developed the sheaf-theoretic approach to sensor networks (2006–2012). The connection to distributed computing (Byzantine agreement, consensus, distributed optimization) has been barely explored.
+
+#### Formalization (Corrected)
+
+Define a **distributed computation sheaf** $\mathcal{F}$ on the **line graph** $L(G)$ of a network graph $G = (V, E)$:
+- **Vertices of $L(G)$:** edges $e \in E$ of the original graph.
+- **$\mathcal{F}(e)$ for edge $e = (u,v)$:** the set of reported values — what $u$ reports to $v$ and what $v$ reports to $u$.
+- **Restriction maps:** for adjacent edges $e_1 = (u,v)$ and $e_2 = (v,w)$ sharing vertex $v$, the restriction forgets the reports on the non-shared edge.
+- **Consistency condition:** For an honest node $v$, the value reported to each neighbor is the same. For a Byzantine node, these can differ.
+
+The **global sections** $\Gamma(L(G), \mathcal{F})$ are exactly the globally consistent configurations. The **obstruction to global consistency** is $H^1(L(G), \mathcal{F})$.
+
+**Conjecture O (Consensus-Cohomology Correspondence):** A distributed system can reach consensus if and only if $H^1(L(G), \mathcal{F}) = 0$ for the appropriate sheaf. The minimum number of communication rounds is related to the Čech cohomology computation depth.
+
+**Conjecture P (Byzantine Detection via Cohomology):** Byzantine faults correspond to locally consistent but globally inconsistent sections — elements of $H^1$. Detecting Byzantine nodes is equivalent to computing the cohomology class and identifying its support.
+
+#### Audit
+
+| Aspect | Assessment |
+|--------|-----------|
+| **Novelty** | Medium. Barmak (2012) and others have applied topology to distributed computing. The Byzantine-cohomology connection is novel. |
+| **Feasibility** | Medium-High. Small network examples are computationally trivial. |
+| **Key correction** | The sheaf must be defined on the **line graph**, not the original graph, with sections encoding **reports between neighbors**, not internal states. This corrects the earlier formulation. |
+| **Sanity check** | Must reproduce the FLP impossibility result: in an asynchronous system with crash failures, the protocol complex has non-trivial $H^0$ (no global section exists). |
+| **What would falsify P** | If $H^1 = 0$ in the presence of Byzantine faults (cohomology fails to detect inconsistency), or if non-Byzantine inconsistencies also produce $H^1 \neq 0$ (false positives). |
+
+#### Concrete First Step: The 4-Node Byzantine Test
+
+**Setup:**
+- Graph $G$: 4 nodes $A, B, C, D$ in a line: $A$—$B$—$C$—$D$.
+- Line graph $L(G)$: edges $e_1 = (A,B)$, $e_2 = (B,C)$, $e_3 = (C,D)$ forming a path.
+- Cover: stars centered at each node. $S_B = \{e_1, e_2\}$, $S_C = \{e_2, e_3\}$.
+
+**Case A (Honest):** All nodes hold value $x$. All reports are consistent. $H^1 = 0$.
+
+**Case B (Byzantine at $C$):** Node $C$ reports $0$ to $B$ and $1$ to $D$.
+- On $S_B$: section is $(x, 0)$ — node $B$ holds $x$, $C$ reports $0$ to $B$.
+- On $S_C$: section is $(1, x)$ — node $C$ reports $1$ to $D$, $D$ holds $x$.
+- On $S_B \cap S_C = \{e_2\}$: the restrictions disagree. $B$ expects $C$ to hold $0$; $D$ expects $C$ to hold $1$. Contradiction.
+- **Prediction:** $H^1 \neq 0$. The obstruction class is supported on the cycle containing $C$.
+
+**Implementation:**
+1. Define the sheaf of sets (or abelian groups, after linearization) on the cover.
+2. Build the Čech cochain complex.
+3. Compute $H^1$ via kernel/image calculation on boundary matrices.
+4. Compare honest vs. Byzantine cases.
+
+**Expected timeline:** 2–3 hours (Python + NumPy).
+
+**Extension:** For each node $v_i$, compute $H^1(G, \mathcal{F}_i)$ where $\mathcal{F}_i$ assumes $v_i$ is Byzantine. The true Byzantine node is the one where $H^1 \neq 0$ with minimal obstruction norm.
+
+---
+
+## Part II: Cross-Pollinations and New Candidates
+
+### Combination 1: Candidates 1 + 6 — Zeta Zeros as Algebraic-Geometric Objects
+
+**The idea:** Upgrade from studying zeta zeros as a point cloud (Candidate 1) to studying the scheme-theoretic structure of the family $\{\zeta(s) = c\}_{c \in \mathbb{C}}$.
+
+**Concrete question:** Can the spacing distribution of zeta zeros be recovered from an algebraic-geometric invariant of this family?
+
+**Technical barriers:**
+1. $\zeta(s)$ is transcendental, not algebraic. The zero set is discrete; its scheme structure in $\mathbb{C}$ is trivial.
+2. Resolution: work with p-adic interpolation. The Kubota-Leopoldt p-adic L-function $L_p(s, \chi)$ is a rigid-analytic function on weight space $\mathcal{W}$. Its zero set $\mathcal{Z}_p$ is a rigid-analytic variety with rich algebraic structure.
+3. The Newton polygon of the Iwasawa polynomial $\sum a_n T^n$ is the p-adic analog of studying the topology of sublevel sets.
+
+**First step:** Study the Iwasawa polynomial's zero set in the open unit disk of $\mathbb{C}_p$. Compute Newton polygons and relate coefficient valuations to zero distributions. Connect to Iwasawa theory (Mazur-Wiles).
+
+**Timeline:** 6+ months. Requires arithmetic geometry expertise and a collaborator.
+
+### Combination 2: Candidates 2 + 7 — Operadic Thermodynamic Computing
+
+**The idea:** If thermodynamic computers (Candidate 7) are to be programmed, they need a composition theory. The operadic framework (Candidate 2) organizes thermodynamic operations at different scales.
+
+**Concrete question:** Does the operad of thermodynamic operations have interesting algebraic properties (formality, cofibrancy) that constrain what thermodynamic computers can efficiently compute?
+
+**Timeline:** Speculative. 6+ months.
+
+### Combination 3: Candidates 3 + 4 — p-Adic Morphogenesis Meets Multi-Omics
+
+**The idea:** Multi-omics data (genomics, proteomics, metabolomics) organized by phylogenetic or developmental hierarchies naturally lives on an ultrametric space. Sheaves on this space provide a rigorous framework for integration.
+
+**Concrete question:** Does the sheaf cohomology of a multi-omics dataset on a phylogenetic tree predict integration failures? Specifically, is high $H^1$ correlated with known cases where co-evolving genes show inconsistent expression across omics layers?
+
+**Dataset:** Human Cell Atlas or GTEx. Build a sheaf on the phylogenetic/developmental tree, with sections for each gene × omics layer. Compute $H^1$ and correlate with known integration failures.
+
+**Timeline:** 2–3 months (requires biology collaborator + existing datasets).
+
+### Combination 4: Candidates 4 + 8 — Federated Multi-Modal Learning
+
+**The idea:** Multi-modal AI is increasingly distributed (federated learning with heterogeneous modalities). The sheaf-theoretic fusion framework (Candidate 4) combines with the distributed computing sheaf framework (Candidate 8) to handle the case where modalities are held by different network nodes.
+
+**Concrete question:** Does the combined sheaf cohomology $H^1(G, \mathcal{F}_{\text{multi-modal}})$ provide tighter communication complexity bounds than either framework alone?
+
+**Timeline:** 3–4 months.
+
+### New Candidate A: Information Geometry × Loss Landscapes
+
+**Domain bridge:** Information Geometry ↔ Algebraic Geometry ↔ Deep Learning Theory
+
+#### Motivation
+
+The Fisher-Rao metric defines a Riemannian metric on the parameter space of any probabilistic model:
+
+$$g_{ij}(\theta) = \mathbb{E}_{y \sim p_\theta(\cdot|x)} \left[ \frac{\partial \log p_\theta(y|x)}{\partial \theta_i} \frac{\partial \log p_\theta(y|x)}{\partial \theta_j} \right]$$
+
+This metric is architecture-independent (depends only on induced distributions), curvature-aware, and connected to natural gradient descent. The undiscovered question: **does the Fisher-Rao metric have algebraic-geometric structure for networks with polynomial activations?**
+
+#### Conjectures
+
+**Conjecture A1:** For networks with polynomial activations, $\det(g_{ij})$ is a semi-algebraic function of $\theta$. Its zero set — the **information-geometric discriminant locus** — is a variety whose topology encodes model complexity.
+
+**Conjecture A2:** The information-geometric discriminant locus has lower-dimensional sublevel sets than the loss variety, providing a "tighter" topological complexity measure.
+
+#### First step
+
+For a 1-hidden-layer network with 2 inputs, 2 hidden units, polynomial activation of degree 2, and binary classification:
+1. Compute the Fisher metric symbolically.
+2. Compute $\det(g_{ij})$ and its zero set.
+3. Analyze the variety (dimension, degree, singularities) using Gröbner bases.
+
+**Timeline:** 2–3 months.
+
+### New Candidate B: Operadic Learning
+
+**Domain bridge:** Operad Theory ↔ Deep Learning Architecture
+
+#### Motivation
+
+Deep learning can be understood as hierarchical composition of "learning operations" at different abstraction levels. Layer 1 learns edges, Layer 2 learns shapes, Layer 3 learns objects. Each level is a coarse-graining of the level below — exactly the structure of an operad.
+
+#### Conjecture
+
+There exists a colored operad $\mathcal{L}$ (colors = levels of abstraction) whose operations represent learning processes, and whose composition structure encodes the **compositionality of learning**: the order of learning sub-features doesn't affect the final representation (up to equivalence).
+
+#### First step
+
+For a 3-layer network on MNIST:
+1. Decompose learned representations by layer.
+2. Test whether the composition of layer-wise feature extractors is approximately associative.
+3. Determine whether any known operad (e.g., little $n$-cubes) acts on the representation spaces.
+
+**Timeline:** 3–4 months. **Feasibility:** Low. Highly speculative.
+
+---
+
+## Part III: Evaluation Summary
+
+| Candidate | Novelty | Feasibility | Impact | Pub. Venue Target | Timeline |
+|-----------|---------|-------------|--------|-------------------|----------|
+| 1. L-function TDA | M-H | High | M-H | Exp. Math. / J. Number Theory | 2 weeks |
+| 2. Operadic RG | M | Low | VH | (Long-term program) | 6+ months |
+| 3. p-Adic morphogenesis | VH | L-M | M | Adv. Math. / Comm. Math. Phys. | 3–6 months |
+| 4. Sheaf multi-modal | M-H | M-H | H | NeurIPS / ICML | 2–3 weeks |
+| 5. Quantum causal | M | Low | M | (Needs scoping first) | 3–6 months |
+| 6. Algebraic loss landscapes | H | L | VH | (Long-term program) | 6+ months |
+| 7. Thermodynamic computing | VH | M | VH | Phys. Rev. Lett. / Nature Phys. | 3–6 months |
+| 8. Byzantine cohomology | M | M-H | M | PODC / DISC | 3 hours |
+| **A. Fisher-Rao × AG** | H | M | H | Found. Comp. Math. | 2–3 months |
+| **B. Operadic Learning** | VH | L | ? | (Speculative) | 3–4 months |
+
+### Priority Ranking (by information density per unit effort)
+
+1. **Candidate 8** (Byzantine cohomology) — 3 hours, clear binary outcome, publishable.
+2. **Candidate 1** (L-function TDA) — 1–2 weeks, clear protocol, publishable regardless of outcome.
+3. **Candidate 4** (Sheaf multi-modal) — 2–3 weeks, ML-venue-ready, needs infrastructure.
+4. **Combination 3** (p-Adic multi-omics) — 2–3 months, biology-venue-ready, needs collaborator.
+5. **Candidate A** (Fisher-Rao × AG) — 2–3 months, mathematically deep, needs algebraic geometry expertise.
+6. **Candidate 3** (p-Adic RD pure math) — 3–6 months, publishable without biology connection.
+7. **Candidate 7** (Thermodynamic computing) — 3–6 months, needs physics collaborator.
+8. **Candidate 6** (Algebraic loss landscapes) — 6+ months, high barrier.
+9. **Candidate 2** (Operadic RG) — 6+ months, needs the right collaborator.
+10. **Candidate 5** (Quantum causal) — Literature review first, may be reformulation.
+11. **Candidate B** (Operadic Learning) — Speculative, low feasibility.
+
+---
+
+## Part IV: Execution Plan
+
+### Phase 1: Quick Wins (Weeks 1–4)
+
+**Week 1–2: Candidate 8 — Byzantine Cohomology Test**
+- Implement the 4-node test on the line graph with report-based sheaf.
+- Compute $H^1$ for honest and Byzantine cases.
+- Verify reproduction of FLP impossibility in sheaf-theoretic terms.
+- **Deliverable:** Working code + proof-of-concept result.
+- **Success criterion:** $H^1 \neq 0$ exactly when Byzantine node is present; support of cohomology class localizes to the faulty node.
+
+**Week 3–4: Candidate 1 — L-function Persistent Homology**
+- Download Odlyzko zeros ($10^6$ points).
+- Generate GUE and Poisson controls.
+- Apply Takens embedding ($d \in \{3,4,5\}$, $\tau \in \{1,2,3\}$).
+- Compute persistent homology (Ripser) in all available dimensions.
+- Statistical comparison (bottleneck distance + bootstrap p-values).
+- **Deliverable:** Persistence diagrams + statistical analysis.
+- **Success criterion:** Any statistically significant topological distinction between zeta and controls. Even a null result constrains the approach.
+
+### Phase 2: Medium-Term (Weeks 5–12)
+
+**Choose one based on Phase 1 results and available collaborators:**
+
+**Option A: Candidate 4 (Sheaf Multi-Modal AI)**
+- Extract CLIP representations (or train small multi-modal model).
+- Define site $\mathcal{X}$ on embedding graph with attention-derived cover.
+- Compute $H^1$ as function of training.
+- Correlate with fusion quality metrics.
+- **Deliverable:** Quantitative evidence for/against Conjecture G.
+- **Timeline:** 6–8 weeks.
+
+**Option B: Combination 3 (p-Adic Multi-Omics)**
+- Obtain multi-omics dataset with phylogenetic structure (e.g., Human Cell Atlas).
+- Define sheaf on phylogenetic tree.
+- Compute $H^1$ and correlate with known integration failures.
+- **Deliverable:** Biological data analysis with sheaf-theoretic interpretation.
+- **Timeline:** 8–12 weeks (requires biology collaborator).
+
+### Phase 3: Long-Term (Months 4–12)
+
+Based on Phase 1–2 results, pursue one or more of:
+- Candidate A (Fisher-Rao × algebraic geometry) — requires algebraic geometry collaborator.
+- Candidate 3 (p-adic RD pure math) — if Phase 2 Option B is productive.
+- Candidate 7 (thermodynamic computing) — requires stochastic thermodynamics collaborator.
+- Candidate 2 (operadic RG toy model) — requires mathematical physics collaborator.
+
+---
+
+## Part V: Meta-Observations
+
+### On the Process
+
+This document was not written in one pass. It was produced through a multi-turn dialogue involving proposal, critique, revision, defense, and synthesis. The corrections from external audit were not cosmetic — they changed formal statements (Conjecture N → N'), identified definitional errors (Byzantine sheaf on line graph, not original graph), and added crucial methodology (Takens embedding for Candidate 1, three-way comparison design).
+
+**What this implies:** Single-author research proposals have blind spots that structured adversarial review corrects. The process of earning claims (Principle A) is not just philosophical — it produces materially better research designs.
+
+### On the Map vs. the Territory
+
+This document is a **map of productive territory**, not a claim that every candidate will yield results. The value of the map is in making precise questions askable, not in predicting which answers will be found. The candidates that survive first contact with computation or proof will be different from the ones that don't — and that's the point.
+
+### On What Constitutes a Discovery
+
+The candidates span a range of discovery types:
+- **Empirical** (Candidate 1: predict a topological property, test it).
+- **Conceptual** (Candidate 4: show sheaves organize multi-modal fusion in a way transformers don't capture).
+- **Methodological** (Candidate 8: provide a new tool for Byzantine detection).
+- **Unificatory** (Combination 1: connect number theory to algebraic geometry through zeta zeros).
+
+All four types are genuine discoveries. The empirical ones have the clearest verification criteria. The conceptual and unificatory ones may prove more durable.
+
+---
+
+## Appendix: Key References
+
+### Per Candidate
+
+| Candidate | Key References |
+|-----------|---------------|
+| 1. L-function TDA | Montgomery (1973), Odlyzko (2001), Carlsson-Memoli (2010), Riello-Rubin (2023) |
+| 2. Operadic RG | Wilson (1971), Costello-Gwilliam (2011–), Stolz-Teichner (2004–), Kontsevich-Soibelman (2009) |
+| 3. p-Adic morphogenesis | Volovich (1987), Vladimirov (2003), Kochubei (2001), Avetisov-Bikulov-Osipov (2005–2015) |
+| 4. Sheaf multi-modal | Curry (2016), Hansen-Ghrist (2020), Bunch et al. (2020), Carlsson (2009) |
+| 5. Quantum causal | Leifer-Spekkens (2013), Allen et al. (2017), Coecke-Kissinger (2017), Oreshkov et al. (2012) |
+| 6. Algebraic loss landscapes | Susske (2017), Huh (2023), Draxler et al. (2018), Garipov et al. (2018), Nguyen-Hein (2017) |
+| 7. Thermodynamic computing | Landauer (1961), Bennett (1973, 1982), Bérut et al. (2012), Jarzynski (1997), Crooks (1999), Aaronson-Arkhipov (2011) |
+| 8. Byzantine cohomology | Barmak (2012), de Silva-Ghrist (2006–2012), Lamport et al. (1982), FLP (1985) |
+| A. Fisher-Rao × AG | Amari (1998), Ay-Jost (2017), Huh-Sturmfels (2014) |
+| B. Operadic Learning | — (no direct references; highly speculative) |
+
+### Methodological
+
+| Topic | Reference |
+|-------|-----------|
+| Persistent homology | Edelsbrunner-Harer (2010), Otter et al. (2017) |
+| Ripser/GUDHI | Bauer (2024), Maria et al. (2014) |
+| Takens embedding | Takens (1981), Deyle-Sugihara (2011) |
+| Sheaf theory | Bredon (1997), Kashiwara-Schapira (1990) |
+| Operads | May (1972), Loday-Vallette (2012) |
+| p-Adic analysis | Koblitz (1984), Vladimirov-Volovich-Zelenov (1994) |
+
+---
+
+*This document is a living artifact. It should be updated as experiments are run, conjectures are confirmed or falsified, and new adjacencies are identified.*
