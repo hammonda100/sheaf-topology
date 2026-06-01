@@ -1,0 +1,857 @@
+# Tools Buildable Before Testing
+
+These aren't dependent on hypotheses being true—they extract value from the *frameworks* and can be tested on systems where ground truth is known.
+
+---
+
+## Tier 1: Diagnostic Tools (Measurement Without Assumption)
+
+<details>
+<summary><b>Tool 1: Universal Dynamic Classifier (UDC)</b></summary>
+
+### What It Does
+
+Takes any system and simultaneously measures it through all 6 frameworks:
+
+```
+Input: Dynamics (equations, time series, spectra, simulations)
+Output: Dashboard showing system position in:
+  - Fisher information metric space (I)
+  - Information coherence manifold (VI)
+  - Scaling phase diagram (III)
+  - Compression efficiency score (IV)
+  - Scale-time tradeoff profile (V) 
+  - Information geometry predictions (II)
+```
+
+### Why Buildable Now
+
+Each framework is mathematically well-defined independently. No assumption of truth required—just calculated geometries.
+
+### Instrumental Value
+
+**Even if hypotheses are ultimately wrong**, any researcher gains:
+- 6-perspective view of their system
+- Early warning of instabilities (Fisher eigenvalue analysis works regardless)
+- Prediction of approximability (coherence position predicts how well compressed models work)
+- Optimal compute allocation (useful scheduling algorithm independent of theory)
+
+### Implementation Sketch
+
+```python
+class UniversalDynamicClassifier:
+    def __init__(self, system_dynamics):
+        self.x = system_dynamics
+    
+    def fisher_analysis(self):
+        """Compute Fisher metric eigenvalues, detect singularities"""
+        # ∇²log p(θ) at each state
+        return eigenvalues, singularity_locations
+    
+    def coherence_position(self):
+        """Jensen-Shannon distance to smooth envelopes"""
+        # Measure how far spectrum is from parsimonious descriptions
+        return jsd_distance, predicted_approximability
+    
+    def scaling_phase(self):
+        """Classify which bottleneck dominates (I-VII)"""
+        # Based on learning curves or dynamics
+        return phase_label, confidence, predicted_next_phase
+    
+    def compression_score(self):
+        """Information-theoretic compressibility"""
+        # Can this be lossily compressed while preserving function?
+        return compression_ratio, loss_rate
+    
+    def scale_time_tradeoff(self):
+        """Predict size ↔ time equivalence"""
+        return pareto_frontier  # (model_size, training_time) space
+    
+    def dashboard(self):
+        """Visualize system simultaneously in all 6 spaces"""
+        return visualization
+```
+
+### Concrete Example
+
+Biologist has gene circuit. UDC outputs:
+- **Fisher analysis**: "No singularity detected; system is stable in current parameter regime"
+- **Coherence**: "Position: intermediate-complexity zone; predicts 65% approximability by neural networks"
+- **Phase**: "Capacity-limited phase; training longer won't help; need larger circuit"
+- **Compression**: "Sequence is 80% compressible; 20% seems information-critical"
+- **Scale-time**: "Can train longer instead of building larger; equivalent at 3:1 ratio"
+- **Geometry**: "Predicted Fisher geodesic suggests circuit should evolve toward (param1, param2, param3) = (0.5, 0.3, 0.8)"
+
+All 6 perspectives immediately actionable even if none of the underlying theories are true.
+
+### Verification on Known Systems
+
+Test on:
+- Magnetic systems at known phase transitions (does Fisher predict $T_c$?)
+- Neural networks with measured scaling laws (do phases match known learning curves?)
+- Protein sequences (does compression score correlate with evolutionary conservation?)
+- Fluid dynamics (does coherence position predict when turbulence occurs?)
+
+If UDC agrees with known predictions on several domains, it's immediately trustworthy.
+
+</details>
+
+---
+
+<details>
+<summary><b>Tool 2: Fisher Information Singularity Detector (FISD)</b></summary>
+
+### What It Does
+
+Monitors any dynamical system in real-time, alerts when Fisher information metric becomes singular (potential phase transition incoming).
+
+```
+Input: Streaming observations of system state
+Output: 
+  - Current Fisher metric eigenvalues
+  - Velocity of eigenvalue change (is it accelerating?)
+  - Estimated time-to-singularity (ETS)
+  - Confidence in prediction
+```
+
+### Why Buildable Now
+
+Fisher information is well-defined for any probability distribution. Computing it requires no truth assumption.
+
+### Instrumental Value
+
+- **Early warning system**: Detects instabilities before they manifest
+- **Regime identification**: Know when system is operating near boundaries
+- **Transition prediction**: Estimate when system will qualitatively change
+
+### Independent Verification
+
+Test on:
+- Magnetic materials approaching Curie temperature
+- Neural networks during learning (does Fisher peak at phase transition boundaries proven in recent work Ziyin et al.?)
+- Chemical reactions near bifurcation points
+
+### Implementation Sketch
+
+```python
+class FisherSingularityDetector:
+    def __init__(self, data_stream, n_params):
+        self.data = []
+        self.n = n_params
+    
+    def compute_fisher_matrix(self, recent_data, window=100):
+        """
+        Fisher matrix: F_ij = ∂²log p(data|θ) / ∂θ_i ∂θ_j
+        Estimate from empirical distribution in recent window
+        """
+        X = recent_data[-window:]
+        Fisher = np.cov(X.T)  # Approximate
+        evals = np.linalg.eigvalsh(Fisher)
+        return Fisher, evals
+    
+    def singularity_approaching(self):
+        """Is smallest eigenvalue trending toward zero?"""
+        recent_evals = [self.compute_fisher_matrix()[1] 
+                       for _ in range(10)]  # Last 10 measurements
+        
+        emin = recent_evals[-1].min()
+        demin_dt = (emin - recent_evals[0].min()) / 10
+        
+        if demin_dt < 0:  # Eigenvalue shrinking
+            ets = emin / abs(demin_dt)  # Extrapolate to singularity
+            return True, ets
+        return False, None
+    
+    def alert(self):
+        approaching, ets = self.singularity_approaching()
+        if approaching:
+            print(f"WARNING: Phase transition in ~{ets} timesteps")
+            return ets
+```
+
+### Use Case
+
+Monitor power grid voltage stability. If Fisher singularity detector predicts grid approaching bifurcation, trigger preventative measures before blackout.
+
+Works *today*, independent of whether the Phase Transition Unification hypothesis is true.
+
+</details>
+
+---
+
+<details>
+<summary><b>Tool 3: Coherence Manifold Locator (CML)</b></summary>
+
+### What It Does
+
+Given any spectrum (neural activity, astronomical, quantum state), computes Jensen-Shannon distance to reference spectra and places system on coherence manifold.
+
+```
+Input: Power spectrum or distribution
+Output:
+  - Position on CMB ← → HRV ← → JWST coherence axis
+  - Predicted system properties:
+    * Approximability by neural networks
+    * Suitability for reduced-basis methods  
+    * Expected compression ratio
+    * Probability of phase transitions
+```
+
+### Why Buildable Now
+
+Jensen-Shannon divergence is standard information-theoretic metric. Requires no truth-assumption beyond "coherence manifold is a useful organizational principle" (which is low bar).
+
+### Instrumental Value
+
+**Use case 1: Determine optimal modeling approach**
+- If system is CMB-like (highly coherent): use simple parameterized models
+- If system is HRV-like (intermediate): use hybrid approaches
+- If system is JWST-like (high complexity): invest in high-resolution methods
+
+**Use case 2: Detect anomalies**
+- If system position on manifold shifts unexpectedly → something changed in underlying dynamics
+- Useful for medical monitoring (is patient's neural/cardiac coherence changing?)
+
+### Verification on Known Systems
+
+Compute JSD for:
+- CMB angular power spectra (should cluster near "highly coherent" end)
+- Cardiac rhythm variability (should cluster in intermediate zone)
+- JWST observations (should scatter on complex end)
+- Turbulent fluid flows (where do they fall? can this predict turbulence transitions?)
+
+If empirical systems cluster as predicted, tool is immediately useful.
+
+### Implementation
+
+```python
+class CoherenceManifoldLocator:
+    def __init__(self):
+        # Reference spectra
+        self.cmb_reference = load_cmb_power_spectrum()
+        self.hrv_reference = load_heart_rate_variability()
+        self.jwst_reference = load_jwst_observation()
+    
+    def jensen_shannon_distance(self, P, Q):
+        """JSD between two distributions"""
+        M = 0.5 * (P + Q)
+        return 0.5 * entropy(P, M) + 0.5 * entropy(Q, M)
+    
+    def coherence_position(self, spectrum):
+        """
+        1D coordinate: how far from CMB (0) to JWST (1)?
+        """
+        d_cmb = self.jensen_shannon_distance(spectrum, self.cmb_reference)
+        d_jwst = self.jensen_shannon_distance(spectrum, self.jwst_reference)
+        
+        position = d_cmb / (d_cmb + d_jwst)  # Normalize to [0,1]
+        return position
+    
+    def predicted_approximability(self, position):
+        """Based on empirical calibration"""
+        # Learned from known systems: 
+        # position → success rate of NN / RB approximation
+        return neural_net_success_rate, rb_success_rate
+```
+
+</details>
+
+---
+
+## Tier 2: Generative Tools (Create Predictions & Designs)
+
+<details>
+<summary><b>Tool 4: Compute Allocator (CA)</b></summary>
+
+### What It Does
+
+Given total compute budget, recommends optimal split between model size and training time.
+
+```
+Input: 
+  - Task description (classification, physical simulation, etc.)
+  - Compute budget (FLOPs or GPU-hours)
+  - Constraints (latency, memory)
+
+Output:
+  - Recommended model size
+  - Recommended training time / tokens
+  - Expected performance
+  - Pareto frontier: (model_size, training_time) options
+```
+
+### Why Buildable Now
+
+Scaling laws for neural networks are empirically characterized (Hoffmann et al., 2022; Maloney et al., 2025). Scale-time duality is observed for neural networks. Don't need universal principle—just use empirical data.
+
+### Instrumental Value
+
+**Immediately useful for ML practitioners**. Saves compute by optimizing allocation. Works *today*.
+
+### Implementation Sketch
+
+```python
+class ComputeAllocator:
+    def __init__(self):
+        # Load empirical scaling law coefficients
+        # From: Hoffmann et al., Chinchilla, recent papers
+        self.scaling_law = load_neural_scaling_laws()
+    
+    def recommend_split(self, total_flops, task_type):
+        """
+        Scaling law: Loss ~ (N/N_c)^-α + (D/D_c)^-β
+        where N = model size, D = data/training time
+        
+        Optimal split when ∂Loss/∂N = ∂Loss/∂D (balance gradients)
+        """
+        # Solve optimization: min Loss(N,D) subject to compute(N,D) = total_flops
+        N_optimal, D_optimal, loss_predicted = optimize()
+        
+        # Generate Pareto frontier: other (N, D) pairs that use same compute
+        pareto = [
+            (N, D, loss) 
+            for ratio in range(0.1, 10, 0.1)
+            if compute(N, D) ≈ total_flops
+        ]
+        
+        return {
+            'recommended_model_size': N_optimal,
+            'recommended_training_tokens': D_optimal,
+            'predicted_loss': loss_predicted,
+            'pareto_frontier': pareto,
+            'confidence': 0.85  # Based on empirical scaling consistency
+        }
+    
+    def sensitivity_analysis(self, baseline_allocation):
+        """How much does performance degrade if we deviate?"""
+        # If forced to use twice as many params trained half as long: loss increases by X%
+        # Helps with practical constraints
+        return sensitivity_map
+```
+
+### Real-World Test
+
+- Train models on ImageNet with varied (size, time) pairs on fixed compute budget
+- Compare actual results to CA predictions
+- If predictions match within 10%, tool is immediately valuable
+
+### Why This Matters
+
+Even if scale-time duality is *not* universal, this tool works for neural networks and saves millions in compute budgets. The tool's value doesn't depend on the hypothesis.
+
+</details>
+
+---
+
+<details>
+<summary><b>Tool 5: Hypothesis-Driven Experiment Planner (HDEP)</b></summary>
+
+### What It Does
+
+For each of the 6+ candidate patterns, generates:
+1. Minimal experiment to test it
+2. Cost estimate (compute, money, time)
+3. Expected information gain
+4. Optimal test sequence (which to run first?)
+
+```
+Input: Candidate hypothesis (or all 6 simultaneously)
+
+Output:
+  - Test A: Concrete experiment; cost: $X, time: Y weeks
+    * True positive if: [specific observable]
+    * False positive rate: Z%
+    * Information gain: W bits
+    
+  - Test B: Alternative experiment; cost: $X2, time: Y2
+    * Better for falsifying hypothesis
+    * Recommended if budget allows testing both
+    
+  - Recommended sequence: Run B first (cheapest), then A
+```
+
+### Why Buildable Now
+
+Given precise hypotheses, can write down their predictions. Doesn't matter if predictions are right—just need to formalize what *would* prove/disprove each.
+
+### Instrumental Value
+
+**Transforms research from ad-hoc to systematic.** Instead of "I wonder if...", you have: "Here are the 3 cheapest ways to know, ranked by information gain."
+
+### Concrete Examples
+
+**For Candidate I (Phase Transitions = Fisher Singularities)**:
+
+Test A (Quick check):
+- Collect 20 physical systems known to have phase transitions
+- Compute Fisher information metric as system approaches critical point
+- Check: does Fisher singular? 
+- Cost: $1,000 compute, 2 weeks
+- Expected info gain: 70% certainty on whether core hypothesis holds
+
+Test B (Precision measurement):
+- Simulate carefully-controlled numerical system (e.g., 2D Ising model)
+- Measure both: (order parameter critical exponent) AND (Fisher metric structure)
+- Check: predicted relationship holds quantitatively?
+- Cost: $5,000 compute, 4 weeks
+- Expected gain: 95% certainty on exact relationship
+
+Test C (Falsification):
+- Search literature for phase transitions without Fisher singularities (or vice versa)
+- 50 hours literature review
+- Cost: $2,500
+- Expected gain: High impact if counter-example exists
+
+**Recommendation**: Run C (cheapest), then A, then B. If C finds counter-example, stop. If A succeeds, do B to quantify relationship precisely.
+
+### Implementation Sketch
+
+```python
+class HDEonePlanner:
+    def __init__(self):
+        self.hypotheses = {
+            'phase_transitions': self.tests_for_phase_transitions(),
+            'biological_compression': self.tests_for_compression(),
+            # ... etc
+        }
+    
+    def tests_for_phase_transitions(self):
+        return [
+            Test(
+                name="Literature Survey for Counter-examples",
+                cost_money=2500,
+                cost_time_weeks=1,
+                required_expertise='domain_knowledge',
+                success_condition="No counter-examples found",
+                info_gain_bits=6.5,  # High impact if fails
+            ),
+            Test(
+                name="Fisher Metric on Known Phase Transitions",
+                cost_money=1000,
+                cost_compute_gflops=1e6,
+                cost_time_weeks=2,
+                success_condition="Fisher metric singular at all 20+ transitions",
+                info_gain_bits=5.2,
+            ),
+            # ... more tests
+        ]
+    
+    def optimal_sequence(self, budget_money=None, budget_time=None, 
+                        budget_compute=None):
+        """
+        Greedily select tests maximizing (info_gain / cost)
+        Ordered by: earliest-deadline earliest, optional stopping
+        """
+        # Dynamic programming over test sequences
+        return recommended_test_sequence, expected_certainty
+    
+    def visualize_test_tree(self):
+        """Show: if test A passes, what should you do next?"""
+        return decision_tree
+```
+
+### Why This Is Powerful
+
+**Even if hypothesis is false**, the tool creates a *systematic research program*. Institutes can budget for it. Researchers can specialize. Funding agencies can understand expected ROI.
+
+</details>
+
+---
+
+<details>
+<summary><b>Tool 6: Cross-Domain Solution Mapper (CDSM)</b></summary>
+
+### What It Does
+
+Takes a solution/theorem from one domain and suggests analogous approaches in another domain via Fisher-Kähler geometry.
+
+```
+Input: 
+  - Successful algorithm/proof from Domain A
+  - Target Domain B
+
+Output:
+  - Analogous approach in Domain B
+  - Predicted difficulty/success likelihood
+  - References to similar work (if it exists)
+  - "Experiment to validate analogy"
+```
+
+### Why Buildable Now
+
+Fisher geometry provides a formal translation map between domains. Can mechanically apply transformations.
+
+### Instrumental Value
+
+- **Accelerates innovation** by cross-pollinating domains
+- **Surfaces surprising connections** that might otherwise be missed
+- **Suggests new experiments** by analogy
+
+### Example Use Cases
+
+**Case 1: Information Bottleneck → Gene Regulation**
+
+Domain A (ML): Information bottleneck principle shows optimal learning compresses via narrow middle layer.
+
+Analogous principle in Domain B (biology): Do genetic programs bottleneck information through compressed regulatory codes?
+
+Prediction: Yes, genomic bottleneck forces neural circuits to compress; leads to specific architectures.
+
+Test: Predict which circuits should be most compressed; validate against CNS data.
+
+**Case 2: Phase Transitions → Neural Plasticity**
+
+Domain A (physics): Critical phenomena have universal scaling exponents across dissimilar systems.
+
+Analogous principle in Domain B (neuroscience): Does neural plasticity undergo "critical windows" with universal structure?
+
+Prediction: Developmental time periods for learning should show universal critical exponents.
+
+Test: Measure plasticity learning curves across ages; check for power-law structure.
+
+### Implementation Sketch
+
+```python
+class CrossDomainSolutionMapper:
+    def __init__(self):
+        self.fisher_geometry = load_fisher_framework()
+        self.code_library = {
+            'ML': load_ml_solutions(),
+            'Biology': load_biological_principles(),
+            'Physics': load_physical_laws(),
+            # ...
+        }
+    
+    def map_between_domains(self, solution, domain_from, domain_to):
+        """
+        Steps:
+        1. Extract solution's structure: what constraints does it exploit?
+        2. Express constraints in Fisher-Kähler language (if possible)
+        3. Translate to domain_to's constraints
+        4. Reconstruct analogous solution
+        """
+        
+        # Represent solution as optimization problem
+        constraints_from = extract_constraints(solution, domain_from)
+        
+        # Fisher geometry mapping
+        geometry_from = self.fisher_geometry[domain_from]
+        geometry_to = self.fisher_geometry[domain_to]
+        mapping = compute_geometric_correspondence(geometry_from, geometry_to)
+        
+        # Translate constraints
+        constraints_to = apply_mapping(constraints_from, mapping)
+        
+        # Reconstruct in domain_to
+        analogous_solution = solve_analogous_problem(constraints_to, domain_to)
+        
+        return {
+            'analogous_solution': analogous_solution,
+            'confidence': compute_confidence(constraints_from, constraints_to),
+            'test': propose_validation_experiment(solution, analogous_solution)
+        }
+    
+    def validate_analogy(self, original, analog, test):
+        """Run test; does analog actually work in target domain?"""
+        return success_rate, failure_modes
+```
+
+### Concrete Example Output
+
+```
+Input: 
+  Solution: "Neural network pruning via information bottleneck"
+  From: Machine Learning
+  To: Evolution/Genomics
+
+Output:
+  Analogous solution: 
+    "Gene regulatory circuits prune via genomic bottleneck"
+    
+  Prediction: 
+    Evolution should have discovered high-density, low-redundancy circuits
+    where each gene filters information before passing to next layer
+    
+  Test:
+    Measure information flow in C. elegans connectome
+    Compare to predictions from IB principle
+    Expected result: actual circuits match IB-optimal architectures
+```
+
+</details>
+
+---
+
+## Tier 3: Integration Tools
+
+<details>
+<summary><b>Tool 7: Contradiction Identifier (CI)</b></summary>
+
+### What It Does
+
+All 6 hypotheses are applied to a system; where do they **conflict** in their predictions?
+
+```
+Input: System description
+
+Output:
+  Cases where candidates predict opposite outcomes:
+    - Candidate A predicts: High compressibility
+    - Candidate B predicts: Low compressibility
+    → This system is a "test case" to distinguish A vs B
+    → Cost of test: $X
+    → Information value: Y bits (if we learn the answer)
+```
+
+### Why Buildable Now
+
+Each candidate makes specific predictions. Comparing predictions is purely logical.
+
+### Instrumental Value
+
+**Identifies highest-value experiments**. A case where hypotheses conflict and a cheap test exists is gold.
+
+### Example
+
+Suppose:
+- Candidate III (Scaling Phases) predicts: "This neural architecture is in Phase II"
+- Candidate VI (Information Coherence) predicts: "This architecture's coherence suggests Phase IV"
+
+→ This contradiction is testable by training the architecture and measuring which phase it actually enters.
+
+→ Test is cheap (just train), high-value (resolves conflict), should be prioritized.
+
+</details>
+
+---
+
+<details>
+<summary><b>Tool 8: Pattern Detector (PD)</b></summary>
+
+### What It Does
+
+Scans scientific literature and databases for signatures of each hypothesis.
+
+```
+Input: Corpus of papers + datasets
+
+Output:
+  - Systems matching Hypothesis I signatures: [list]
+  - Systems showing Hypothesis IV patterns: [list]
+  - Anomalous systems (don't match any): [list]
+  - Highest priority test cases: [ranked]
+```
+
+### Why Buildable Now
+
+Text search + automated feature extraction. Mechanical process.
+
+### Instrumental Value
+
+- Identifies published data that could test hypotheses
+- Finds edge cases that violate predictions
+- Surfaces surprising connections
+
+### Example Output
+
+```
+Scanning 50,000 papers on phase transitions...
+
+Hypothesis I (Fisher Singularities) coverage:
+  ✓ Magnetic systems: 1,200 papers match
+  ✓ Learning dynamics: 150 papers match  
+  ? Quantum phase transitions: only 40 papers analyzed
+    "Most quantum papers don't compute Fisher metric"
+    "Opportunity: reanalyze quantum transition literature through Fisher lens"
+
+Anomalies found:
+  - Paper: "Percolation without criticality" (Smith et al., 2023)
+    Prediction: Should see Fisher singularity
+    Actual result: Fisher metric remains bounded
+    Status: POTENTIAL COUNTER-EXAMPLE for Hypothesis I
+    Action: Add to high-priority test list
+```
+
+</details>
+
+---
+
+## Tier 4: Meta-Infrastructure
+
+<details>
+<summary><b>Tool 9: Hypothesis Management System (HMS)</b></summary>
+
+### What It Does
+
+A research project management system specialized for hypothesis-driven science.
+
+```
+For each hypothesis:
+  - Formal statement (in logic / mathematics)
+  - List of predictions (what should be true if this holds)
+  - List of tests (experiments, calculations, literature searches)
+  - Status of each test (planned, in-progress, completed, result)
+  - Dependencies (does this hypothesis require others?)
+  - Estimated posterior probability (Bayesian update after each test)
+  - Cost trajectory (what's been spent, what remains)
+```
+
+### Components
+
+**Formalization Engine**
+- Converts verbal hypothesis → mathematical statements
+- Flags ambiguities
+- Generates list of falsifiable predictions automatically
+
+**Dependency Graph**
+- If Hypothesis A is true and Hypothesis B is false → what else must be true?
+- Identifies which combinations are mutually consistent
+- Suggests tests that resolve multiple hypotheses simultaneously
+
+**Bayesian Updater**
+- Starting probability for each hypothesis
+- After each test, update: $P(H | \text{test result}) \propto P(\text{test result} | H) \cdot P(H)$
+- Rank hypotheses by posterior probability
+- Estimate: how many more tests needed to reach 95% confidence?
+
+**Resource Allocator**
+- Given budget, recommend test sequence maximizing expected information gain per dollar
+- Track compute, money, person-hours spent
+- Estimate time-to-resolution for each hypothesis
+
+**Literature Integration**
+- Automatically track related papers
+- Flag if new paper conflicts with current hypothesis status
+- Update probabilities based on published evidence
+
+### Example Interface
+
+```
+Hypothesis: "Phase Transitions = Fisher Singularities"
+
+Status: IN PROGRESS
+
+Predictions:
+  1. ☐ All physical phase transitions show Fisher metric divergence
+  2. ☐ No phase transitions exist without Fisher singularities
+  3. ☐ Critical exponents derive from Fisher geometry
+  4. ☐ Learning dynamics show same phase transition signatures
+
+Tests Completed:
+  ✓ Ising model at T_c: Fisher diverges as predicted (confidence: 95%)
+  ✓ Neural networks: Fisher peaks at phase transitions (confidence: 87%)
+  
+Tests In Progress:
+  🔄 Quantum phase transitions: computing Fisher for 50+ systems
+  
+Tests Planned:
+  □ Search literature for counter-examples
+  □ Measure BKT transition Fisher structure
+  □ Universal scaling exponents
+
+Probabilistic Status:
+  P(TRUE | tests so far) = 0.72
+  Estimated tests to 95% confidence: 3 more
+  Estimated cost: $15,000, 8 weeks
+
+Depends On:
+  - Hypothesis II (Information Geometry Universality): IF that's true, makes this more likely
+  - Candidate VI (Coherence Hierarchy): Orthogonal; doesn't affect this
+
+Next Recommended Test:
+  "BKT Transition Fisher Analysis" 
+  Cost: $3,000
+  Expected info gain: 2.1 bits
+  Predicted outcome: 60% probability Fisher shows essential singularity
+```
+
+### Why Buildable Now
+
+This is software engineering. No new science required.
+
+### Instrumental Value
+
+**Transforms research culture**: Instead of individual hunches, teams can systematically pursue research frontiers with clear resource allocation and probability estimates.
+
+</details>
+
+---
+
+## Summary: What's Actionable Right Now
+
+| Tool | Can Build | Useful Today | Depends On Theory Being True |
+|------|-----------|-------------|------|
+| 1. UDC (Universal Classifier) | ✅ Yes | ✅ Yes | ❌ No (works anyway) |
+| 2. FISD (Singularity Detector) | ✅ Yes | ✅ Yes (as anomaly warning) | ⚠️ Partially (Fisher always works) |
+| 3. CML (Coherence Locator) | ✅ Yes | ✅ Yes | ❌ No (classification tool) |
+| 4. CA (Compute Allocator) | ✅ Yes | ✅ Yes (proven for NNs) | ⚠️ Partially (for scaling laws) |
+| 5. HDEP (Experiment Planner) | ✅ Yes | ✅ Yes | ❌ No (pre-test planning) |
+| 6. CDSM (Domain Mapper) | ✅ Yes | ⚠️ Moderate (novelty unpredictable) | ⚠️ Depends on analogy validity |
+| 7. CI (Contradiction Locator) | ✅ Yes | ✅ Yes | ❌ No (pure logic) |
+| 8. PD (Pattern Detector) | ✅ Yes | ✅ Yes | ❌ No (search tool) |
+| 9. HMS (Hypothesis Manager) | ✅ Yes | ✅ Yes | ❌ No (project management) |
+
+---
+
+## Highest-Impact Build Order
+
+If I had to implement 3 tools immediately:
+
+### Priority 1: **Hypothesis Management System (HMS)**
+
+Why: Multiplies output of all other efforts. Institutions get organized research program, not scattered exploration.
+
+**Implementation time**: 4 weeks (software engineering)
+
+**ROI**: Immediately improves any research group working on these questions
+
+---
+
+### Priority 2: **Experiment Planner (HDEP) + Contradiction Identifier (CI)**
+
+Why: Directly converts hypotheses → testable, budgeted experiments.
+
+**Implementation time**: 3 weeks
+
+**ROI**: Every researcher can now plan investigations scientifically
+
+---
+
+### Priority 3: **Universal Classifier (UDC) + Coherence Locator (CML)**
+
+Why: Provides immediate diagnostic value, works today, generates data for HMS.
+
+**Implementation time**: 2 weeks (mostly wrapping existing numerical libraries)
+
+**ROI**: Every system measured through multiple lenses; anomalies surface instantly
+
+---
+
+## What These Tools Enable
+
+1. **Rapid hypothesis iteration**: Test cheapest tests first, systematically eliminate weak candidates
+2. **Cross-domain insight transfer**: Analogies formalized, trackable, testable
+3. **Transparent research**: Every step documented, probabilistic status clear
+4. **Resource efficiency**: Avoid wasting compute on unlikely hypotheses
+5. **Collaboration**: Multiple teams can work on different hypotheses with clear interfaces
+6. **Falsifiability**: Continuous automatic search for counter-examples
+
+---
+
+## Concrete Implementation Timeline
+
+**Week 1-2**: Build HMS (base project management infrastructure)
+
+**Week 2-3**: Implement UDC + CML (diagnostic measurements)
+
+**Week 3-4**: Integrate HDEP + CI (experiment planning)
+
+**Week 4-6**: Deploy PD (automated literature scan) + CA (compute allocation)
+
+**Week 6+**: Iteratively add refinements, domain-specific modules
+
+Total: **6 weeks to functional research infrastructure** capable of systematically exploring all 6+ hypotheses.
+
+Cost: ~$150k engineering (or $50k if using open-source libraries + 1 engineer at $100/hr × 500 hrs)
+
+ROI: Can now systematically spend $millions on targeted experiments instead of scattered exploration.
